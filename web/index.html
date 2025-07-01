@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQS Lambda Pattern</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 SQS Lambda Pattern</h1>
+        <p>This web application is built with the following architecture:</p>
+        <ul>
+            <li><strong>WAF</strong>: us-east-1 (Required for CloudFront)</li>
+            <li><strong>CloudFront</strong>: Global CDN Distribution</li>
+            <li><strong>S3</strong>: Static Website Hosting (Sydney)</li>
+            <li><strong>API Gateway + Lambda</strong>: Serverless API (Sydney)</li>
+        </ul>
+        
+        <h2>Lambda Function Test</h2>
+        <button onclick="testLambda1()">Test Sample Lambda 1</button>
+        <button onclick="testLambda2()">Test Sample Lambda 2</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testLambda1() {
+            await testApi('/api/sample-lambda-1', 'Sample Lambda 1');
+        }
+
+        async function testLambda2() {
+            await testApi('/api/sample-lambda-2', 'Sample Lambda 2');
+        }
+
+        async function testApi(endpoint, lambdaName) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `Calling ${lambdaName}...`;
+            
+            try {
+                const testData = {
+                    message: `Test message from web UI for ${lambdaName}`,
+                    timestamp: new Date().toISOString()
+                };
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>✅ ${lambdaName} Message Sent Successfully!</h3>
+                    <p><strong>Status:</strong> Message queued for processing</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <p><em>Note: The Lambda function will process this message asynchronously from the SQS queue.</em></p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3>❌ ${lambdaName} Call Failed</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
