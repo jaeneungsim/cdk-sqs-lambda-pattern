@@ -281,6 +281,7 @@ export class FrontendStack extends cdk.Stack {
           origin: apiOrigin,
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+          allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
         },
       },
       defaultRootObject: 'index.html',
