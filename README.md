@@ -1,6 +1,8 @@
 # AWS CDK SQS-Lambda Pattern
 
-A production-ready serverless web application pattern using AWS CDK that provides resilient, asynchronous request processing through SQS queues.
+A demonstration of how to implement asynchronous request processing patterns using AWS CDK, SQS queues, and Lambda functions. This project showcases solutions to common real-world problems I've encountered in production environments.
+
+> **Note**: This is a learning and demonstration project. For production deployments, ensure proper WAF configuration, security hardening, and stack separation according to your organization's requirements.
 
 ## Why This Pattern?
 
@@ -130,9 +132,24 @@ Essential CloudWatch metrics to monitor:
 
 ## Production Considerations
 
+> **Important**: This demonstration project is not production-ready as-is. The following considerations are essential for production deployment:
+
+### Security Hardening Required
+- **WAF Configuration**: Implement comprehensive WAF rules beyond basic rate limiting
+- **Authentication & Authorization**: Add proper API authentication mechanisms
+- **Secrets Management**: Use AWS Secrets Manager or Parameter Store for sensitive data
+- **Network Security**: Configure VPC, security groups, and NACLs if accessing VPC resources
+- **Monitoring & Alerting**: Implement comprehensive logging and alerting systems
+
+### Stack Separation Best Practices
+- **Environment Isolation**: Separate stacks for dev/staging/production environments
+- **Cross-Stack Dependencies**: Minimize dependencies between stacks for better maintainability
+- **Resource Tagging**: Implement consistent tagging strategy for cost allocation and management
+- **Access Control**: Use separate IAM roles and policies for different environments
+
 ### Environment Configuration
 ```typescript
-// Different settings per environment
+// Different settings per environment - customize for your needs
 const config = {
   dev: { rateLimitRpm: 1000, lambdaConcurrency: 10 },
   prod: { rateLimitRpm: 10000, lambdaConcurrency: 100 }
